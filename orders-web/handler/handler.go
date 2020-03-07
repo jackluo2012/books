@@ -11,7 +11,7 @@ import (
 	auth "books/auth/proto/auth"
 	invS "books/inventory-srv/proto/inventory"
 	order "books/orders-srv/proto/order"
-	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/v2/client"
 	"github.com/micro/go-micro/util/log"
 )
 
@@ -35,7 +35,7 @@ func New(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "非法请求", 400)
 		return
 	}
-
+	log.Log("bugs=")
 	r.ParseForm()
 	bookId, _ := strconv.ParseInt(r.Form.Get("bookId"), 10, 10)
 

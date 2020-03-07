@@ -1,7 +1,6 @@
 package access
 
 import (
-	"books/basic/config"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/micro/go-micro/broker"
@@ -45,11 +44,7 @@ func (s *service) MakeAccessToken(subject *Subject) (ret string, err error) {
 	//创建
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, m)
 
-	fmt.Printf("[MakeAccessToken] 创建token失败@，err: %s",[]byte(config.GetJwtConfig().GetSecretKey()))
-
-	ret, err = token.SignedString([]byte(config.GetJwtConfig().GetSecretKey()))
-
-
+	ret, err = token.SignedString([]byte(cfg.SecretKey))
 	if err != nil {
 		return "", fmt.Errorf("[MakeAccessToken] 创建token失败，err: %s", err)
 	}

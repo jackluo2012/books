@@ -1,7 +1,7 @@
 package orders
 
 import (
-	"books/basic/db"
+	"books/plugins/db"
 	proto "books/orders-srv/proto/order"
 	"github.com/micro/go-micro/util/log"
 )

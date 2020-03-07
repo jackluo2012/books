@@ -6,8 +6,8 @@ import (
 	ordS "books/orders-srv/proto/order"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/micro/go-micro"
-	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/client"
 	"sync"
 )
 

@@ -3,10 +3,10 @@ package orders
 import (
 	invS "books/inventory-srv/proto/inventory"
 	proto "books/orders-srv/proto/order"
-	"github.com/micro/go-micro/client"
 	"fmt"
-	"sync"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/micro/go-micro/v2/client"
+	"sync"
 )
 
 var (

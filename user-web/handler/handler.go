@@ -6,7 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/micro/go-micro/util/log"
-	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/v2/client"
 	"net/http"
 	"time"
 	"books/plugins/session"
@@ -39,7 +39,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	r.ParseForm()
-
+	log.Log("serviceClient=",serviceClient)
 	//调用后台服务
 	rsp, err := serviceClient.QueryUserByName(context.TODO(), &us.Request{
 		UserName: r.Form.Get("userName"),

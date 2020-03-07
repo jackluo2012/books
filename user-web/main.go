@@ -2,29 +2,40 @@ package main
 
 import (
 	"books/basic"
+	"books/basic/common"
 	"books/basic/config"
 	"books/user-web/handler"
 	"fmt"
-	"github.com/micro/cli"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/registry/etcd"
+	"github.com/micro/cli/v2"
 	"github.com/micro/go-micro/util/log"
-	"github.com/micro/go-micro/web"
+	"github.com/micro/go-micro/v2/registry"
+	"github.com/micro/go-micro/v2/registry/etcd"
+	"github.com/micro/go-micro/v2/web"
+	"github.com/micro/go-plugins/config/source/grpc/v2"
 )
+
+var (
+	appName = "user_web"
+	cfg     = &userCfg{}
+)
+
+type userCfg struct {
+	common.AppCfg
+}
 
 func main() {
 	// 初始化配置
-	basic.Init()
+	initCfg()
 
 	//使用etcd 注册
 	micReg := etcd.NewRegistry(registryOptions)
 	// create new web service
 	service := web.NewService(
 		// 后面两个web，第一个是指是web类型的服务，第二个是服务自身的名字
-		web.Name("mu.micro.book.web.user"),
-		web.Version("latest"),
+		web.Name(cfg.Name),
+		web.Version(cfg.Version),
 		web.Registry(micReg),
-		web.Address(":8088"),
+		web.Address(cfg.Addr()),
 	)
 
 	// initialise service 初始化服务
@@ -35,7 +46,7 @@ func main() {
 				handler.Init()
 			}),
 	); err != nil {
-		log.Fatal(err)
+		log.Fatal("这里报错了吗？？",err)
 	}
 
 	// register call handler
@@ -51,6 +62,28 @@ func main() {
 }
 
 func registryOptions(ops *registry.Options) {
-	etcdCfg := config.GetEtcdConfig()
-	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.GetHost(), etcdCfg.GetPort())}
+	etcdCfg := &common.Etcd{}
+	err := config.C().App("etcd", etcdCfg)
+	if err != nil {
+		panic(err)
+	}
+	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.Host, etcdCfg.Port)}
+}
+
+func initCfg() {
+	source := grpc.NewSource(
+		grpc.WithAddress("127.0.0.1:9600"),
+		grpc.WithPath("micro"),
+	)
+
+	basic.Init(config.WithSource(source))
+
+	err := config.C().App(appName, cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Infof("[initCfg] 配置，cfg：%v", cfg)
+
+	return
 }

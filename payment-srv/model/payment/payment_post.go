@@ -2,7 +2,7 @@ package payment
 
 import (
 	"books/basic/common"
-	"books/basic/db"
+	"books/plugins/db"
 	invS "books/inventory-srv/proto/inventory"
 	ordS "books/orders-srv/proto/order"
 	"context"

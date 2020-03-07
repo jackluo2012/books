@@ -1,24 +1,27 @@
 package access
 
 import (
-	"books/basic/redis"
+	"books/basic/config"
+	"books/plugins/jwt"
+	"books/plugins/redis"
 	"fmt"
 	r "github.com/go-redis/redis"
+	"github.com/micro/go-micro/util/log"
 	"sync"
 )
 
 // # 负责定义、初始化等
 
 var (
-	s  *service
-	ca *r.Client
-	m  sync.RWMutex
+	s   *service
+	ca  *r.Client
+	m   sync.RWMutex
+	cfg = &jwt.Jwt{}
 )
 
 // service 服务
 type service struct {
 }
-
 
 // Service 用户服务类
 type Service interface {
@@ -30,7 +33,6 @@ type Service interface {
 
 	// DelUserAccessToken 清除用户token
 	DelUserAccessToken(token string) (err error)
-
 }
 
 // GetService 获取服务类
@@ -48,6 +50,13 @@ func Init() {
 	if s != nil {
 		return
 	}
+
+	err := config.C().App("jwt", cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Log("[initCfg] 配置，cfg：%v", cfg)
 	ca = redis.GetRedis()
 	s = &service{}
 }

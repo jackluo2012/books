@@ -1,9 +1,7 @@
 package db
 
-
-
 import (
-	"books/basic/config"
+	"books/basic"
 	"database/sql"
 	"fmt"
 	"github.com/micro/go-micro/util/log"
@@ -16,8 +14,12 @@ var (
 	m       sync.RWMutex
 )
 
+func init() {
+	basic.Register(initDB)
+}
+
 // Init 初始化数据库
-func Init() {
+func initDB() {
 	m.Lock()
 	defer m.Unlock()
 
@@ -30,9 +32,7 @@ func Init() {
 	}
 
 	// 如果配置声明使用mysql
-	if config.GetMysqlConfig().GetEnabled() {
-		initMysql()
-	}
+	initMysql()
 
 	inited = true
 }

@@ -2,7 +2,7 @@ package orders
 
 import (
 	"books/basic/common"
-	"books/basic/db"
+	"books/plugins/db"
 	invS "books/inventory-srv/proto/inventory"
 	"context"
 	"github.com/micro/go-micro/util/log"

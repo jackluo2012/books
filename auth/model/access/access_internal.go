@@ -1,7 +1,6 @@
 package access
 
 import (
-	"books/basic/config"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"time"
@@ -61,7 +60,7 @@ func (s *service) parseToken(tk string) (c *jwt.StandardClaims, err error) {
 		if !ok {
 			return nil, fmt.Errorf("不合法的token格式: %v", token.Header["alg"])
 		}
-		return []byte(config.GetJwtConfig().GetSecretKey()), nil
+		return []byte(cfg.SecretKey), nil
 	})
 
 	// jwt 框架自带了一些检测，如过期，发布者错误等

@@ -2,31 +2,44 @@ package main
 
 import (
 	"books/basic"
+	"books/basic/common"
 	"books/basic/config"
 	"github.com/micro/go-micro/util/log"
 	"net/http"
 
 	"books/payment-web/handler"
 	"fmt"
-	"github.com/micro/cli"
-	"github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/registry/etcd"
-	"github.com/micro/go-micro/web"
+	"github.com/micro/cli/v2"
+	"github.com/micro/go-micro/v2/registry"
+	"github.com/micro/go-micro/v2/registry/etcd"
+	"github.com/micro/go-micro/v2/web"
+	"github.com/micro/go-plugins/config/source/grpc/v2"
 )
+
+var (
+	appName = "payment_web"
+	cfg     = &appCfg{}
+)
+
+type appCfg struct {
+	common.AppCfg
+}
+
+
 
 func main() {
 	// 初始化配置
-	basic.Init()
+	initCfg()
 
 	// 使用etcd注册
 	micReg := etcd.NewRegistry(registryOptions)
 
 	// 创建新服务
 	service := web.NewService(
-		web.Name("mu.micro.book.web.payment"),
-		web.Version("latest"),
+		web.Name(cfg.Name),
+		web.Version(cfg.Version),
 		web.Registry(micReg),
-		web.Address(":8090"),
+		web.Address(cfg.Addr()),
 	)
 	// 初始化服务
 	if err := service.Init(
@@ -48,7 +61,31 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
 func registryOptions(ops *registry.Options) {
-	etcdCfg := config.GetEtcdConfig()
-	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.GetHost(), etcdCfg.GetPort())}
+	etcdCfg := &common.Etcd{}
+	err := config.C().App("etcd", etcdCfg)
+	if err != nil {
+		panic(err)
+	}
+
+	ops.Addrs = []string{fmt.Sprintf("%s:%d", etcdCfg.Host, etcdCfg.Port)}
+}
+
+func initCfg() {
+	source := grpc.NewSource(
+		grpc.WithAddress("127.0.0.1:9600"),
+		grpc.WithPath("micro"),
+	)
+
+	basic.Init(config.WithSource(source))
+
+	err := config.C().App(appName, cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Infof("[initCfg] 配置，cfg：%v", cfg)
+
+	return
 }

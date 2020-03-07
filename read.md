@@ -23,8 +23,9 @@ $ micro --registry=etcd --api_namespace=mu.micro.book.web  api --handler=web
 $ cd user-srv
 $ go run main.go plugin.go
 
-$ cd user-web
+$ cd user-web  
 $ go run main.go plugin.go
+ 
 
 $ cd payment-srv
 $ go run main.go plugin.go

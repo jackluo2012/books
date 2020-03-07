@@ -2,7 +2,7 @@ package inventory
 
 import (
 	"books/basic/common"
-	"books/basic/db"
+	"books/plugins/db"
 	proto "books/inventory-srv/proto/inventory"
 	"fmt"
 	"github.com/go-log/log"

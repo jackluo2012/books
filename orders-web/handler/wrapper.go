@@ -18,7 +18,6 @@ func AuthWrapper(h http.Handler) http.Handler {
 			http.Error(w, "非法请求", 400)
 			return
 		}
-
 		sess := session.GetSession(w, r)
 		if sess.ID != "" {
 			// 检测是否通过验证
