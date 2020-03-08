@@ -7,9 +7,9 @@ import (
 	"books/basic"
 	"books/basic/common"
 	"books/basic/config"
+	z "books/plugins/zap"
 	"fmt"
 	"github.com/micro/cli/v2"
-	"github.com/micro/go-micro/util/log"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
@@ -19,6 +19,7 @@ import (
 var (
 	appName = "auth_srv"
 	cfg     = &authCfg{}
+	log     = z.GetLogger()
 )
 
 type authCfg struct {
@@ -57,7 +58,7 @@ func main() {
 
 	// Run service
 	if err := service.Run(); err != nil {
-		log.Fatal(err)
+		log.Fatal("启动服务失败，错误: " + err.Error())
 	}
 }
 
@@ -83,8 +84,6 @@ func initCfg() {
 	if err != nil {
 		panic(err)
 	}
-
-	log.Infof("[initCfg] 配置，cfg：%v", cfg)
 
 	return
 }

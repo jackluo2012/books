@@ -1,0 +1,2 @@
+{"level":"info","ts":1583574070.091691,"caller":"zap/zap.go:39","msg":"[initLogger] zap plugin initializing completed"}
+{"level":"info","ts":1583574455.952162,"caller":"zap/zap.go:39","msg":"[initLogger] zap plugin initializing completed"}
