@@ -52,3 +52,5 @@
 {"level":"info","ts":1583653176.043348,"caller":"handler/auth.go:31","msg":"[MakeAccessToken] 收到创建token请求"}
 {"level":"info","ts":1583653176.752446,"caller":"handler/auth.go:31","msg":"[MakeAccessToken] 收到创建token请求"}
 {"level":"info","ts":1583653177.295666,"caller":"handler/auth.go:31","msg":"[MakeAccessToken] 收到创建token请求"}
+{"level":"info","ts":1583740443.860672,"caller":"zap/zap.go:39","msg":"[initLogger] zap plugin initializing completed"}
+{"level":"info","ts":1583741251.227796,"caller":"handler/auth.go:31","msg":"[MakeAccessToken] 收到创建token请求"}

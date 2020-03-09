@@ -15,6 +15,8 @@ import (
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"github.com/micro/go-plugins/config/source/grpc/v2"
 	"github.com/micro/go-micro/util/log"
+	openTrace "github.com/micro/go-plugins/wrapper/trace/opentracing"
+	"github.com/opentracing/opentracing-go"
 )
 
 var (
@@ -40,6 +42,7 @@ func main() {
 		micro.Registry(micReg),
 		micro.Version(cfg.Version),
 		micro.Address(cfg.Addr()),
+		micro.WrapHandler(opentracing.NewHandlerWrapper()),
 	)
 
 	// Initialise service

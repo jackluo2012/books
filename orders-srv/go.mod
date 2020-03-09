@@ -13,6 +13,7 @@ require (
 	github.com/micro/go-micro v1.18.0
 	github.com/micro/go-micro/v2 v2.2.0
 	github.com/micro/go-plugins/config/source/grpc/v2 v2.0.3
+	github.com/micro/go-plugins/wrapper/trace/opentracing v0.0.0-20200119172437-4fe21aa238fd
 )
 
 replace (

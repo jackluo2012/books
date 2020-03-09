@@ -44,7 +44,7 @@ func Init() {
 
 //Login 登录入口
 func Login(w http.ResponseWriter, r *http.Request) {
-
+	ctx := r.Context()
 	//只接受POST请求
 	if r.Method != "POST" {
 		log.Logf("非法请求")
@@ -55,7 +55,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	log.Log("serviceClient=", serviceClient)
 	//调用后台服务
-	rsp, err := serviceClient.QueryUserByName(context.TODO(), &us.Request{
+	rsp, err := serviceClient.QueryUserByName(ctx, &us.Request{
 		UserName: r.Form.Get("userName"),
 	})
 	if err != nil {

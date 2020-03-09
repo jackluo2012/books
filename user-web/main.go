@@ -5,6 +5,7 @@ import (
 	"books/basic/common"
 	"books/basic/config"
 	"books/plugins/breaker"
+	"books/plugins/tracer/opentracing/std2micro"
 	"books/user-web/handler"
 	"fmt"
 	"github.com/afex/hystrix-go/hystrix"
@@ -17,6 +18,8 @@ import (
 	"net"
 	"net/http"
 	"time"
+	tracer "books/plugins/tracer/jaeger"
+	"github.com/opentracing/opentracing-go"
 )
 
 var (
@@ -34,6 +37,12 @@ func main() {
 
 	//使用etcd 注册
 	micReg := etcd.NewRegistry(registryOptions)
+	t, io, err := tracer.NewTracer(cfg.Name, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer io.Close()
+	opentracing.SetGlobalTracer(t)
 	// create new web service
 	service := web.NewService(
 		// 后面两个web，第一个是指是web类型的服务，第二个是服务自身的名字
@@ -56,13 +65,15 @@ func main() {
 		log.Fatal("这里报错了吗？？", err)
 	}
 
+	//设置采样率
+	std2micro.SetSamplingFrequency(50)
 	// register call handler
 	handlerLogin := http.HandlerFunc(handler.Login)
 
-	service.Handle("/user/login", breaker.BreakerWrapper(handlerLogin))
+	service.Handle("/user/login", std2micro.TracerWrapper(breaker.BreakerWrapper(handlerLogin)))
 	// 注册退出接口
-	service.HandleFunc("/user/logout", handler.Logout)
-	service.HandleFunc("/user/test", handler.TestSession)
+	service.Handle("/user/logout", std2micro.TracerWrapper(http.HandlerFunc(handler.Logout)))
+	service.Handle("/user/test", std2micro.TracerWrapper(http.HandlerFunc(handler.TestSession)))
 
 	hystrixStreamHandler := hystrix.NewStreamHandler()
 	hystrixStreamHandler.Start()

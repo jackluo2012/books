@@ -11,6 +11,8 @@ require (
 	github.com/micro/go-micro v1.18.0
 	github.com/micro/go-micro/v2 v2.2.0
 	github.com/micro/go-plugins/config/source/grpc/v2 v2.0.3
+	github.com/micro/go-plugins/wrapper/trace/opentracing/v2 v2.0.3
+	github.com/opentracing/opentracing-go v1.1.0
 )
 
 replace (

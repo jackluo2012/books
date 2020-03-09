@@ -14,8 +14,11 @@ import (
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
 	"time"
-
+	tracer "books/plugins/tracer/jaeger"
+	openTrace "github.com/micro/go-plugins/wrapper/trace/opentracing/v2"
+	"github.com/opentracing/opentracing-go"
 	"github.com/micro/go-plugins/config/source/grpc/v2"
+
 )
 
 /**
@@ -41,8 +44,14 @@ func main() {
 
 	// 使用etcd注册
 	micReg := etcd.NewRegistry(registryOptions)
-	log.Log("micReg=",micReg)
-	log.Log("cfg.Name",cfg.Name)
+
+	t, io, err := tracer.NewTracer(cfg.Name, "localhost:6831")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer io.Close()
+	opentracing.SetGlobalTracer(t)
+
 	// New Service 新建service
 	service := micro.NewService(
 		micro.Name(cfg.Name),
@@ -50,6 +59,7 @@ func main() {
 		micro.RegisterInterval(time.Second*10),
 		micro.Version(cfg.Version),
 		micro.Registry(micReg),
+		micro.WrapHandler(openTrace.NewHandlerWrapper(opentracing.GlobalTracer())),
 		micro.Address(cfg.Addr()),
 	)
 
