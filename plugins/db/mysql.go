@@ -49,7 +49,8 @@ func initMysql() {
 	// 最大闲置数
 	mysqlDB.SetMaxIdleConns(cfg.Mysql.MaxIdleConnection)
 
-	mysqlDB.SetConnMaxLifetime(time.Second * 1000)
+	//连接数据库闲置断线的问题
+	mysqlDB.SetConnMaxLifetime(time.Second * 100)
 	// 激活链接
 	if err = mysqlDB.Ping(); err != nil {
 		log.Fatal(err)

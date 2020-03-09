@@ -2,14 +2,16 @@ package handler
 
 import (
 	auth "books/auth/proto/auth"
+	"books/plugins/session"
 	us "books/user-srv/proto/user"
 	"context"
 	"encoding/json"
+	hystrix_go "github.com/afex/hystrix-go/hystrix"
 	"github.com/micro/go-micro/util/log"
 	"github.com/micro/go-micro/v2/client"
+	"github.com/micro/go-plugins/wrapper/breaker/hystrix/v2"
 	"net/http"
 	"time"
-	"books/plugins/session"
 )
 
 var (
@@ -24,8 +26,20 @@ type Error struct {
 }
 
 func Init() {
-	serviceClient = us.NewUserService("mu.micro.book.srv.user", client.DefaultClient)
-	authClient = auth.NewAuthService("mu.micro.book.srv.auth", client.DefaultClient)
+	hystrix_go.DefaultVolumeThreshold = 0
+	hystrix_go.DefaultErrorPercentThreshold = 1
+	cl := hystrix.NewClientWrapper()(client.DefaultClient)
+	cl.Init(
+		client.Retries(3),
+		//为了调试看log方便，始终返回true, nil，即会一直重试直至重试次数用尽
+		client.Retry(func(ctx context.Context, req client.Request, retryCount int, err error) (bool, error) {
+			log.Log(req.Method(), retryCount, " client retry")
+			return true, nil
+		}),
+	)
+	//log.Info("cl=",cl)
+	serviceClient = us.NewUserService("mu.micro.book.srv.user", cl)
+	authClient = auth.NewAuthService("mu.micro.book.srv.auth", cl)
 }
 
 //Login 登录入口
@@ -39,7 +53,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	r.ParseForm()
-	log.Log("serviceClient=",serviceClient)
+	log.Log("serviceClient=", serviceClient)
 	//调用后台服务
 	rsp, err := serviceClient.QueryUserByName(context.TODO(), &us.Request{
 		UserName: r.Form.Get("userName"),

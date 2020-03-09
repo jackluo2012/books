@@ -13,6 +13,7 @@ import (
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/registry"
 	"github.com/micro/go-micro/v2/registry/etcd"
+	"time"
 
 	"github.com/micro/go-plugins/config/source/grpc/v2"
 )
@@ -45,6 +46,8 @@ func main() {
 	// New Service 新建service
 	service := micro.NewService(
 		micro.Name(cfg.Name),
+		micro.RegisterTTL(time.Second*15),
+		micro.RegisterInterval(time.Second*10),
 		micro.Version(cfg.Version),
 		micro.Registry(micReg),
 		micro.Address(cfg.Addr()),

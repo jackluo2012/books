@@ -20,29 +20,24 @@ micro new --namespace=mu.micro.book --type=web --alias=user books/user-web
 ```
 $ micro --registry=etcd --api_namespace=mu.micro.book.web  api --handler=web
 
-$ cd user-srv
-$ go run main.go plugin.go
+$ cd user-srv && go run main.go plugin.go
+$ 
 
-$ cd user-web  
-$ go run main.go plugin.go
+$ cd user-web && go run main.go plugin.go
  
 
-$ cd payment-srv
-$ go run main.go plugin.go
+$ cd payment-srv && go run main.go plugin.go
 
-$ cd payment-web
-$ go run main.go plugin.go
+$ cd payment-web && go run main.go plugin.go
 
-$ cd orders-web
-$ go run main.go plugin.go
+$ cd orders-web && go run main.go plugin.go
 
-$ cd orders-srv
-$ go run main.go plugin.go
+$ cd orders-srv && go run main.go plugin.go
 
-$ cd inventory-srv
-$ go run main.go plugin.go
+$ cd inventory-srv && go run main.go plugin.go
 
-$ cd auth
-$ go run main.go plugin.go
+$ cd auth && go run main.go plugin.go
 
+
+$ docker run --name hystrix-dashboard -d -p 8081:9002 mlabouardy/hystrix-dashboard:latest
 ```
